@@ -5,7 +5,13 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using SkiaSharp;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.Formats.Bmp;
 
 public class ResizeImageFunction
 {
@@ -20,34 +26,60 @@ public class ResizeImageFunction
 
     [Function("ResizeImageFunction")]
     public async Task RunAsync(
-        [BlobTrigger("product-images/{name}", Connection = "AzureWebJobsStorage")] Stream imageStream, 
+        [BlobTrigger("product-images/{name}", Connection = "AzureWebJobsStorage")] Stream inputStream, 
         string name)
     {
         _logger.LogInformation($"Processing new image: {name}");
 
         try
         {
-            // Read the original image
-            using var inputStream = new MemoryStream();
-            await imageStream.CopyToAsync(inputStream);
-            inputStream.Position = 0;
-            using var originalImage = SKBitmap.Decode(inputStream);
+            // Copy the incoming stream to a MemoryStream
+            using var memoryStream = new MemoryStream();
+            await inputStream.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
 
-            // Resize the image to 200x200 pixels
-            using var resizedImage = originalImage.Resize(new SKImageInfo(200, 200), SKFilterQuality.High);
-            using var image = SKImage.FromBitmap(resizedImage);
+            // Detect image format using ImageSharp
+            IImageFormat detectedFormat = Image.DetectFormat(memoryStream);
+            if (detectedFormat == null)
+            {
+                throw new InvalidOperationException("Unsupported image format.");
+            }
+            memoryStream.Position = 0;
+            using var image = await Image.LoadAsync(memoryStream);
+
+            // Resize the image to 100x100 pixels using Pad mode
+            image.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Size = new Size(100, 100),
+                Mode = ResizeMode.Pad
+            }));
+
+            // Generate new file name with _thumb suffix
+            var newFileName = $"{Path.GetFileNameWithoutExtension(name)}_thumb{Path.GetExtension(name)}";
+
+            // Choose the appropriate encoder based on file extension
+            IImageEncoder encoder = name.ToLower() switch
+            {
+                var ext when ext.EndsWith(".jpg") || ext.EndsWith(".jpeg") => new JpegEncoder(),
+                var ext when ext.EndsWith(".bmp") => new BmpEncoder(),
+                var ext when ext.EndsWith(".gif") => new GifEncoder(),
+                _ => new PngEncoder(),
+            };
+
+            // Save the resized image into an output MemoryStream
             using var outputStream = new MemoryStream();
-            image.Encode(SKEncodedImageFormat.Jpeg, 80).SaveTo(outputStream);
+            await image.SaveAsync(outputStream, encoder);
             outputStream.Position = 0;
 
-            // Save resized image to another blob container
-            var outputContainer = _blobServiceClient.GetBlobContainerClient("resized-product-images");
-            await outputContainer.CreateIfNotExistsAsync(PublicAccessType.Blob);
-            var outputBlob = outputContainer.GetBlobClient(name);
+            // Use the injected BlobServiceClient to get the "resized-product-images" container
+            var container = _blobServiceClient.GetBlobContainerClient("resized-product-images");
+            await container.CreateIfNotExistsAsync(PublicAccessType.Blob);
+            var blobClient = container.GetBlobClient(newFileName);
 
-            await outputBlob.UploadAsync(outputStream, new BlobHttpHeaders { ContentType = "image/jpeg" });
+            // Upload the processed image
+            await blobClient.UploadAsync(outputStream, new BlobHttpHeaders { ContentType = detectedFormat.DefaultMimeType }, overwrite: true);
 
-            _logger.LogInformation($"Image resized and saved: {name}");
+            _logger.LogInformation($"Image resized and saved as: {newFileName}");
         }
         catch (Exception ex)
         {
