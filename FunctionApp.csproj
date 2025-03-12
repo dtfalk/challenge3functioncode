@@ -16,8 +16,9 @@
     <!-- Azure Blob Storage SDK -->
     <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
 
-    <!-- SkiaSharp for Image Processing -->
-    <PackageReference Include="SkiaSharp" Version="2.88.6" />
+
+    <!-- SixLabors.ImageSharp for image processing -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
   </ItemGroup>
 
   <!-- Ensure host.json is copied to the output directory -->
