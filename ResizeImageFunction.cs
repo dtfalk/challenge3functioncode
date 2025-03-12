@@ -26,7 +26,7 @@ public class ResizeImageFunction
 
     [Function("ResizeImageFunction")]
     public async Task RunAsync(
-        [BlobTrigger("product-images/{name}", Connection = "AzureWebJobsStorage")] Stream inputStream, 
+        [BlobTrigger("product-images/{name}", Connection = "DefaultEndpointsProtocol=https;AccountName=testingstorageaccount204;AccountKey=RWz04tx3H/SW1zEvCaqmqJh1nc6ME7O3cvY7Cm5DbVNSP5xUQbKtz961M97oE2mOOLQDiQAFk/o1+AStdsH+ag==;EndpointSuffix=core.windows.net")] Stream inputStream, 
         string name)
     {
         _logger.LogInformation($"Processing new image: {name}");
