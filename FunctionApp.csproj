@@ -7,10 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Core Azure Functions SDK -->
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.16.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Storage" Version="5.0.0" />
+
+    <!-- Azure Blob Storage SDK -->
     <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
-    <PackageReference Include="SkiaSharp" Version="2.88.3" />
+
+    <!-- SkiaSharp for Image Processing -->
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
   </ItemGroup>
 
 </Project>
