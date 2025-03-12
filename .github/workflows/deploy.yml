@@ -3,7 +3,7 @@ name: Deploy Azure Function
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build-and-deploy:
@@ -30,6 +30,9 @@ jobs:
       - name: Deploy to Azure Functions
         uses: azure/functions-action@v1
         with:
-          app-name: "resizefunctionapp"  
+          app-name: "resizefunctionapp"
           package: "./publish"
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        env:
+          AzureWebJobsStorage: ${{ secrets.AzureWebJobsStorage }}
+          FUNCTIONS_WORKER_RUNTIME: dotnet-isolated
