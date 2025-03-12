@@ -76,8 +76,8 @@ public class ResizeImageFunction
             await container.CreateIfNotExistsAsync(PublicAccessType.Blob);
             var blobClient = container.GetBlobClient(newFileName);
 
-            // Upload the processed image
-            await blobClient.UploadAsync(outputStream, new BlobHttpHeaders { ContentType = detectedFormat.DefaultMimeType }, overwrite: true);
+            // Upload the processed image; passing the overwrite parameter positionally
+            await blobClient.UploadAsync(outputStream, new BlobHttpHeaders { ContentType = detectedFormat.DefaultMimeType }, true);
 
             _logger.LogInformation($"Image resized and saved as: {newFileName}");
         }
