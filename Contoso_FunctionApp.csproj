@@ -1,17 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
-    <OutputType>Library</OutputType>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <SelfContained>false</SelfContained>
-    <!-- For Windows Function App, you generally don't need a specific RuntimeIdentifier, 
-         but if you do want to force it, you could add:
-         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-     -->
-  </PropertyGroup>
+<PropertyGroup>
+  <TargetFramework>net8.0</TargetFramework>
+  <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+  <OutputType>Exe</OutputType>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <Nullable>enable</Nullable>
+  <SelfContained>false</SelfContained>
+  <!-- Optional: <RuntimeIdentifier>win-x64</RuntimeIdentifier> for forcing a Windows build -->
+</PropertyGroup>
 
   <ItemGroup>
     <!-- The main Worker packages for isolated Azure Functions -->
