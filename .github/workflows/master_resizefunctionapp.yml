@@ -33,20 +33,21 @@ jobs:
         shell: pwsh
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          dotnet publish --configuration Release --output ./output
+          dotnet build --configuration Release --output ./output
           popd
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_663EAAE7DD634A48BAFE2EB16A87B175 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_790481B677624FECB2BD218D1CED4E10 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_93A6AD87E0664444A6754FF5D7BA0BE9 }}
+          client-id: ${{ secrets.__clientidsecretname__ }}
+          tenant-id: ${{ secrets.__tenantidsecretname__ }}
+          subscription-id: ${{ secrets.__subscriptionidsecretname__ }}
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
         with:
           app-name: 'resizefunctionapp'
+          slot-name: 'Production'
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
           
