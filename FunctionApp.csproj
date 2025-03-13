@@ -1,4 +1,4 @@
-<!-- <Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -28,10 +28,10 @@
     </None>
   </ItemGroup>
 
-</Project> -->
+</Project>
 
 
-<Project Sdk="Microsoft.NET.Sdk">
+<!-- <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -52,4 +52,4 @@
     </None>
   </ItemGroup>
 
-</Project>
+</Project> -->
