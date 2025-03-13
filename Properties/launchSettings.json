@@ -1,0 +1,9 @@
+{
+    "profiles": {
+      "Contoso_FunctionApp": {
+        "commandName": "Project",
+        "commandLineArgs": "--port 7049",
+        "launchBrowser": false
+      }
+    }
+  }

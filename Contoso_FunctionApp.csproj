@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <OutputType>Library</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <SelfContained>false</SelfContained>
+    <!-- For Windows Function App, you generally don't need a specific RuntimeIdentifier, 
+         but if you do want to force it, you could add:
+         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+     -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The main Worker packages for isolated Azure Functions -->
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Storage.Blobs" Version="6.6.0" />
+    
+    <!-- The Worker Sdk, pinned to a stable version. 2.0.0 is relatively new and 
+         can cause conflicts. Let's try 1.14.0 or 1.15.0 for stability. -->
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.15.0" OutputItemType="Analyzer" />
+
+    <!-- Optional if you are using AspNetCore features in your isolated worker -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+
+    <!-- For resizing images -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" /> 
+    <!-- ^ 3.1.6 has known vulnerabilities, so let's update to 3.1.8 or later -->
+
+    <!-- For Windows data protection (if needed at all) -->
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="host.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+</Project>
